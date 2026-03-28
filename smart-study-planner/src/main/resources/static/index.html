@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Study Planner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #d2a5a5;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            width: 350px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #2e3a71, #7f52ac);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #taskList {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .task {
+            background: #f7f9fc;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .task button {
+            width: auto;
+            padding: 5px 10px;
+            margin: 5px 5px 0 0;
+        }
+
+        .complete-btn {
+            background: #28a745;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+        }
+
+        #msg {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Smart Study Planner</h1>
+
+    <input type="text" id="title" placeholder="Enter title">
+    <input type="text" id="desc" placeholder="Enter description">
+    <input type="date" id="deadline">
+
+    <button onclick="addTask()">Add Task</button>
+    <button onclick="toggleTasks()" id="toggleBtn">Show Tasks</button>
+
+    <p id="msg"></p>
+
+    <h3 id="taskTitle" style="display:none;">All Tasks</h3>
+    <div id="taskList"></div>
+</div>
+
+<script>
+    const API = "http://localhost:8080/tasks";
+    let visible = false;
+
+    function addTask() {
+        const title = document.getElementById("title").value;
+        const description = document.getElementById("desc").value;
+        const deadline = document.getElementById("deadline").value;
+
+        if (!title || !deadline) {
+            document.getElementById("msg").innerText = "Title & Deadline required!";
+            return;
+        }
+
+        fetch(API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ title, description, deadline })
+        })
+        .then(res => res.json())
+        .then(() => {
+            document.getElementById("msg").innerText = "Task Added!";
+            clearInputs();
+        });
+    }
+
+    function getTasks() {
+        const list = document.getElementById("taskList");
+        const title = document.getElementById("taskTitle");
+
+        fetch(API)
+        .then(res => res.json())
+        .then(data => {
+            list.innerHTML = "";
+            title.style.display = "block";
+
+            data.forEach(task => {
+                list.innerHTML += `
+                    <div class="task">
+                        <b>${task.title}</b><br>
+                        ${task.description}<br>
+                        Deadline: ${task.deadline}<br>
+                        Status: ${task.status}<br>
+
+                        ${task.status !== "Completed" ? 
+                        `<button class="complete-btn" onclick="completeTask(${task.id})">Complete</button>` : ""}
+
+                        <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    function toggleTasks() {
+        const list = document.getElementById("taskList");
+        const title = document.getElementById("taskTitle");
+        const btn = document.getElementById("toggleBtn");
+
+        if (!visible) {
+            getTasks();
+            btn.innerText = "Hide Tasks";
+            visible = true;
+        } else {
+            list.innerHTML = "";
+            title.style.display = "none";
+            btn.innerText = "Show Tasks";
+            visible = false;
+        }
+    }
+
+    function completeTask(id) {
+        fetch(`${API}/${id}/complete`, {
+            method: "PUT"
+        })
+        .then(() => {
+            document.getElementById("msg").innerText = "Task Completed!";
+            getTasks();
+        });
+    }
+
+    function deleteTask(id) {
+        fetch(`${API}/${id}`, {
+            method: "DELETE"
+        })
+        .then(() => {
+            document.getElementById("msg").innerText = "Task Deleted!";
+            getTasks();
+        });
+    }
+
+    function clearInputs() {
+        document.getElementById("title").value = "";
+        document.getElementById("desc").value = "";
+        document.getElementById("deadline").value = "";
+    }
+</script>
+
+</body>
+</html>
