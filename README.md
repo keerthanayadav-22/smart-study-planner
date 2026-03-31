@@ -1,12 +1,12 @@
-📚 Smart Study Planner
+📚 **Smart Study Planner**
 
-📌 Project Description
+📌 **Project Description**
 
 Smart Study Planner is a web-based application that helps students manage their study tasks and deadlines efficiently. It allows users to create, track, and update tasks to improve productivity and time management.
 
 ---
 
-🚀 Features
+🚀 **Features**
 
 - Add, view, and delete tasks
 - Set and track deadlines
@@ -15,7 +15,7 @@ Smart Study Planner is a web-based application that helps students manage their 
 
 ---
 
-🛠️ Tech Stack
+🛠️ **Tech Stack**
 
 - Backend: Java, Spring Boot
 - Database: MySQL
@@ -24,7 +24,7 @@ Smart Study Planner is a web-based application that helps students manage their 
 
 ---
 
-⚙️ How to Run
+⚙️ **How to Run**
 
 1. Clone the repository
 2. Open in IDE (IntelliJ / Eclipse)
@@ -34,7 +34,7 @@ Smart Study Planner is a web-based application that helps students manage their 
 
 ---
 
-🎯 Future Improvements
+🎯 **Future Improvements**
 
 - User authentication (Login/Signup)
 - Notifications for deadlines
@@ -43,6 +43,6 @@ Smart Study Planner is a web-based application that helps students manage their 
 
 ---
 
-🙌 Authors
+🙌 **Authors**
 
 - Bandari Keerthana
